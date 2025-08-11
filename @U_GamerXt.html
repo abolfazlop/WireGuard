@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTERY</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #141e30, #243b55);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 16px;
+            text-align: center;
+        }
+        input {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+        button {
+            cursor: pointer;
+            background: #ff4b5c;
+            color: rgb(0, 0, 0);
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ff1e40;
+        }
+        select {
+            background: rgba(255, 255, 255, 0.2);
+            color: #000000;
+        }
+        .hidden {
+            display: none;
+        }
+        .glow-text {
+            animation: glow 1.5s infinite alternate;
+        }
+        @keyframes glow {
+            0% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
+            50% { text-shadow: 0 0 15px rgba(255, 255, 255, 1); }
+            100% { text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="lockScreen">
+        <h1 class="glow-text"> U_GamerXt </h1>
+        <ul>
+            <li><a href="https://www.youtube.com/@U_GamerXt">چنل یوتیوب</a></li>
+        </ul>
+        <input type="password" id="passwordInput" placeholder="PASSWORD">
+        <button onclick="checkPassword()">ورود</button>
+    </div>
+
+    <div class="container hidden" id="mainContent">
+        <h1 class="glow-text"> پنل ساخت وایرگارد U_GamerXt</h1>
+        <label>مدت اعتبار:</label>
+        <select id="duration">
+            <option value="1 روز">1 روز</option>
+            <option value="7 روز" selected>7 روز</option>
+            <option value="30 روز">30 روز</option>
+        </select>
+
+        <label>حجم فایل:</label>
+        <select id="fileSize">
+            <option value="1GB">1GB</option>
+            <option value="2GB" selected>2GB</option>
+            <option value="5GB">5GB</option>
+        </select>
+
+        <label>اپراتور:</label>
+        <select id="operator">
+            <option value="همراه اول">همراه اول</option>
+            <option value="ایرانسل" selected>ایرانسل</option>
+            <option value="رایتل">رایتل</option>
+        </select>
+
+        <button onclick="generateConfig()">تولید</button>
+        <button onclick="copyToClipboard()">کپی</button>
+        <button onclick="saveToFile()">دانلود</button>
+        <pre id="output">اینجا نتیجه نمایش داده می‌شود...</pre>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <h2>کانال‌ها:</h2>
+        <ul>
+            <li><a href="https://www.youtube.com/@U_GamerXt">یوتیوب</a></li>
+            <li><a href="https://www.instagram.com/u_gamerxt">اینستاگرام</a></li>
+            <li><a href="https://t.me/ownerU_GamerXt">تلگرام</a></li>
+        </ul>
+    </div>
+
+<script>
+    function checkPassword() {
+        let password = document.getElementById("passwordInput").value;
+        if (password === "U_GamerXt") {
+            document.getElementById("lockScreen").style.display = "none";
+            document.getElementById("mainContent").style.display = "block";
+        } else {
+            alert("رمز اشتباه است!");
+        }
+    }
+
+    async function generatePrivateKey() {
+        const key = new Uint8Array(32);
+        window.crypto.getRandomValues(key);
+        return btoa(String.fromCharCode(...key));
+    }
+
+    function generateRandomIP() {
+        return "80.81." + (Math.floor(Math.random() * 256)) + "." + (Math.floor(Math.random() * 256));
+    }
+
+    async function generateConfig() {
+        let privateKey = await generatePrivateKey();
+        let address = "25." + (Math.floor(Math.random() * 256)) + "." + (Math.floor(Math.random() * 256)) + "." + (Math.floor(Math.random() * 256)) + "/24";
+        let dns = generateRandomIP() + ", 10.202.10.10";
+        let port = Math.floor(Math.random() * (65535 - 1024)) + 1024;
+        let mtu = Math.floor(Math.random() * (1500 - 1280)) + 1280;
+
+        let config = `[Interface]
+PrivateKey = ${privateKey}
+Address = ${address}
+DNS = ${dns}
+MTU = ${mtu}
+ListenPort = ${port}`;
+
+        document.getElementById("output").textContent = config;
+    }
+
+    function copyToClipboard() {
+        let text = document.getElementById("output").textContent;
+        let textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        alert("متن با موفقیت کپی شد!");
+    }
+
+    function saveToFile() {
+        let filename = prompt("نام فایل را وارد کنید:");
+        if (!filename) return;
+        if (!filename.endsWith(".conf")) {
+            filename += ".conf";
+        }
+        let text = document.getElementById("output").textContent;
+        let blob = new Blob([text], { type: "application/octet-stream" });
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+</script>
+
+</body>
+</html>
